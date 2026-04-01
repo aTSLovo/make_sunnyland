@@ -1,9 +1,6 @@
-使用mingw开发环境
+spdlog speedlog
 
-下载nlohmann_json、spdlog的源码，在本地编译完成后，修改build下cmake_install.cmake的CMAKE_INSTALL_PREFIX路径为C:/Library/xxx，然后打开命令行点CMake:Install，完成这两个库的安装，并在系统环境变量的用户变量path添加这俩个库的路径
-
-同样的下载好SDL3、SDL3_mixer、SDL3_ttf、SDL3_image，大版本是3，devel-mingw.zip文件，解压出来把里面的文件夹拖到C盘Library文件夹下的SDL3中，路径同理添加
-
-glm也是一样的
-
-SDL3_mixer发布后和ZiyuGameDev老师有冲突，需要修改API，已修改
+json(JavaScript Object Notation)是一种轻量级的数据交换格式，常用于存储和传输结构化数据。基于键值对的格式。
+- 键和值：键必须用双引号包裹，值可以是字符串、数字、布尔值、数组、对象或 null。
+- 分隔符：键值对之间用冒号 : 分隔，多组键值对用逗号 , 分隔。
+- 结构：对象用大括号 {} 包裹，数组用中括号 [] 包裹。

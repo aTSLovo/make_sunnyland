@@ -4,148 +4,136 @@
 #include <SDL3_mixer/SDL_mixer.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <glm/glm.hpp>
+#include <spdlog/spdlog.h>
+#include <nlohmann/json.hpp>
+#include <fstream>
 
 int main(int, char**) {
+    // 设置最低打印消息等级，默认为info
+    spdlog::set_level(spdlog::level::info);
 
-    glm::vec2 a = glm::vec2(1.0f, 2.0f);
-    glm::vec2 b = glm::vec2(3.0f, 4.0f);
-    auto c = a * b;
-    auto d = glm::distance(a, b);
-    SDL_Log("d = (%f)", d);
+    // 消息
+    spdlog::trace("最低级的log!");
+    spdlog::debug("调试消息!");
+    spdlog::info("消息: hello world!");
+    spdlog::warn("警告信息!");
+    spdlog::error("出错!");
+    spdlog::critical("高级别的log!");
 
-    SDL_Log("c = (%f, %f)", c.x, c.y);
+    spdlog::info("日志输出：{}, {}, {}", "2026.04.01", "hello", 11.41);
 
-    std::cout << "Hello, World!" << std::endl;
-    // SDL初始化
-    if (!SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO)) {
-        std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
-        return 1;
-    }
-    // 创建窗口
-    SDL_Window *window = SDL_CreateWindow("Hello World!", 800, 600, 0);
-    // 创建渲染器
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
+    try {
+        // 1. 加载json文件
+        std::ifstream imput_file("assets/json_example.json");
+        nlohmann::ordered_json json_data = nlohmann::ordered_json::parse(imput_file);
+        imput_file.close();
+        spdlog::info("成功加载json文件");
 
-    // SDL3_Image不需要手动初始化
+        // 2. 获取不同类型的数据
+        // 2.1 字符串类型
+        std::string name = json_data.at("name").get<std::string>();
+        spdlog::info("Name: {}", name);
 
-    // 加载图片
-    SDL_Texture *texture = IMG_LoadTexture(renderer, "assets/textures/Props/big-crate.png");
+        // 2.2 数字
+        int age = json_data["age"].get<int>();
+        double height  = json_data["height_meters"].get<double>();
+        spdlog::info("Age: {}", age);
+        spdlog::info("Height: {}", height);
 
-    // SDL3的API大改了，SDL_Mixer初始化过程调整
-    MIX_Audio *audio = NULL;
-    MIX_Mixer *mixer = NULL;
-    MIX_Track *track = NULL;
+        // 2.3 检查是否为null
+        // 中括号里的键不存在，会告知是null
+        // std::string email = json_data["email_"].get<std::string>();
+        // spdlog::info("Email: {}", email);
+        // 但是at会检测out_of_range，结论中括号可以获取一个不存在的键，但是at方法不行
+        std::string email = json_data.at("email").get<std::string>();
+        spdlog::info("Email: {}", email);
+        
+        // 3 安全访问的方法
+        // 3.1 .contains()检查某个键是否存在，如不存在则返回false
+        if(json_data.contains("email")) {
+            spdlog::info("Email: {}", json_data["email"].get<std::string>());
+        }
+        if(json_data.contains("nonExistentKey")) {
+            spdlog::info("nonExistentKey is found");
+        }
+        else {
+            spdlog::info("nonExistentKey is not found");
+        }
 
-    if(!MIX_Init()) {
-        std::cerr << "Couldn't init SDL_mixer library: " << SDL_GetError() << std::endl;
-        return 1;
-    }
+        // 3.2 .value()获取一个可能存在的键，如不存在则返回指定默认值(第二个参数)
+        std::string optional_value = json_data.value("optionalKey", "default_string_value");
+        int optional_int = json_data.value("optionalNumber", 42);
+        spdlog::info("Optional Key(string): {}", optional_value);
+        spdlog::info("Optional Key(int): {}", optional_int);
 
-    /* Create a mixer on the default audio device. Don't care about the specific audio format. */
-    mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
-    if (!mixer) {
-        std::cerr << "Couldn't create mixer on default device: " << SDL_GetError() << std::endl;
-        return 1;
-    }
-    /* load a sound file */
-    char *path = NULL;
-    SDL_asprintf(&path, "assets/audio/hurry_up_and_run.ogg", SDL_GetBasePath());  /* allocate a string of the full file path */
-    audio = MIX_LoadAudio(mixer, path, false);
-    if (!audio) {
-        std::cerr << "Couldn't load " << path << ":" << SDL_GetError() << std::endl;
-        SDL_free(path);
-        return 1;
-    }
-    SDL_free(path); /* done with this, the file is loaded. */
+        // 4 对象(大括号嵌套)
+        nlohmann::ordered_json address_obj = json_data["address"];
+        std::string street = address_obj["street"].get<std::string>();
+        std::string city = address_obj.value("city", "Unknown City"); // 使用 .value() 提供默认值
+        bool isPrimaryAddr = address_obj.value("isPrimary", false);   // 访问对象内的布尔值
+        spdlog::info("Address: {}, {}", street, city);
+        spdlog::info("Is Primary Address: {}", isPrimaryAddr);
 
-    /* we need a track on the mixer to play the audio. Each track has audio assigned to it, and
-       all playing tracks are mixed together for the final output. */
-    track = MIX_CreateTrack(mixer);
-    if (!track) {
-        std::cerr << "Couldn't create a mixer track: " << SDL_GetError() << std::endl;
-        return 1;
-    }
-    MIX_SetTrackAudio(track, audio);
-    /* 播放音乐 start the audio playing! */
-    MIX_PlayTrack(track, 0);  /* no extra options this time, so a zero for the second argument. */
+        // 5 数组
+        // 5.1 数组 (Array) - 字符串数组
+        spdlog::info("Hobbies: ");
+        nlohmann::ordered_json hobbies_array = json_data["hobbies"];
+        for(const auto& hobby : hobbies_array) {
+            spdlog::info(" - {}", hobby.get<std::string>());
+        }
 
-    // SDL_TTF初始化
-    if (!TTF_Init()) {
-        std::cerr << "TTF_Init Error: " << SDL_GetError() << std::endl;
-        return 1;
-    }
-    // 加载字体
-    TTF_Font *font = TTF_OpenFont("assets/fonts/VonwaonBitmap-16px.ttf", 24);
-
-    // 创建文本纹理
-    SDL_Color color = {255, 255, 255, 255};
-    SDL_Surface *surface = TTF_RenderText_Solid(font, "Hello, SDL! 中文也可以", 0, color);
-    SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer, surface);
-
-    // SDL3 新的绘制文本方法
-    TTF_TextEngine *textEngine = TTF_CreateRendererTextEngine(renderer);
-    TTF_Text *text = TTF_CreateText(textEngine, font, "SDL3 新的文本渲染方式", 0);
-    TTF_SetTextColor(text, 255, 0, 0, 255);
-    TTF_SetTextWrapWidth(text, 50);
-    // Do something with the window and renderer here...
-    // 渲染循环
-    glm::vec2 mousePos = glm::vec2(0.0f, 0.0f);
-    while (true) {
-        SDL_Event event;
-        if (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT) {
-                break;
+        // 5.2 数组 (Array) - 数字数组
+        spdlog::info("Scores:");
+        for(const auto& score : json_data["scores"]) {
+            if(score.is_number_integer()) {
+                spdlog::info(" - {}", score.get<int>());
+            }
+            else if(score.is_number_float()) {
+                spdlog::info(" - {}", score.get<double>());
             }
         }
-        auto state = SDL_GetMouseState(&mousePos.x, &mousePos.y);
-        // SDL_Log("Mouse Pos: (%f, %f)", mousePos.x, mousePos.y);
-        if (state & SDL_BUTTON_LMASK) {
-            SDL_Log("Left Button Down");
+
+        // 5.3 数组 (Array) - 对象数组
+        spdlog::info("projects:");
+        for(const auto& project : json_data["projects"]) {
+            std::string projectName = project["projectName"].get<std::string>();
+            std::string status = project["status"].get<std::string>();
+            double budget = project.value("budget", 0.0); // 使用 value 获取，若不存在则为0.0
+            bool isActive = project.value("isActive", false);
+
+            spdlog::info("  ProjectName: {}", projectName);
+            spdlog::info("  Status: {}", status);
+            spdlog::info("  Budget: {}", budget);
+            spdlog::info("  Is Active: {}", isActive);
+
+            if(project.contains("deadline")) {
+                if(project["deadline"].is_null()) {
+                    spdlog::info("  deadline: null");
+                }
+                else {
+                    spdlog::info("  deadline: {}", project["deadline"].get<std::string>());
+                }
+            }
+            spdlog::info("--------------------------------");
         }
-        if (state & SDL_BUTTON_RMASK) {
-            SDL_Log("Right Button Down");
+
+        // 5.4 直接访问更深层嵌套的对象和数组
+        double metadata_version = json_data["metadata"]["version"].get<double>();
+        spdlog::info("Metadata Version: {}", metadata_version);
+        spdlog::info("Metadata Tags:");
+        for(const auto& tag_array : json_data.at("metadata").at("tags")) {
+            std::string tag = tag_array.get<std::string>();
+            spdlog::info("  - {}", tag);
         }
-        // 清屏
-        SDL_RenderClear(renderer);
-        // 画一个长方形
-        SDL_FRect rect = {100, 100, 200, 200};
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderFillRect(renderer, &rect);
-        
 
-        // 画图片
-        SDL_FRect dstrect = {200, 200, 200, 200};
-        SDL_RenderTexture(renderer, texture, NULL, &dstrect);
-
-        // 画文本
-        SDL_FRect textRect = {300, 300, static_cast<float>(surface->w), static_cast<float>(surface->h)};
-        SDL_RenderTexture(renderer, textTexture, NULL, &textRect);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); 
-
-        // 新的画文本方法：
-        TTF_DrawRendererText(text, 400, 400);
-
-        // 更新屏幕
-        SDL_RenderPresent(renderer);
+        // 6 保存json数据到文件
+        std::ofstream output_file("assets/json_save.json");
+        output_file << json_data.dump(4); // 使用 dump(4) 进行格式化输出，缩进为4个空格
+        output_file.close();
+        spdlog::info("JSON 数据已保存到文件 assets/json_save.json");
+    } catch (const std::exception& e) {
+        spdlog::error("Exception: {}", e.what());
+        // return EXIT_FAILURE;
     }
-
-    // 清理图片资源
-    SDL_DestroyTexture(texture);
-
-    /* we don't save `audio`; SDL_mixer will clean it up for us during MIX_Quit(). */
-    // 清理音乐资源
-    MIX_Quit();
-
-    // 清理字体资源
-    SDL_DestroySurface(surface);
-    SDL_DestroyTexture(textTexture);
-    TTF_CloseFont(font);
-    TTF_Quit();
-
-    // 清理并退出
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
     return 0;
 }
