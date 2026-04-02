@@ -28,8 +28,14 @@ find_package(glm REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
+add_executable(${TARGET})
+set(sources src/main.cpp
+            src/engine/core/GameApp.cpp
+            src/engine/core/Time.cpp    
+)
+
 # 添加可执行文件
-add_executable(${TARGET} main.cpp)
+target_sources(${TARGET} PUBLIC ${sources})
 
 # 链接库
 target_link_libraries(${TARGET}
