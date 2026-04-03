@@ -1,4 +1,4 @@
-#include "TextureManager.h"
+#include "textureManager.h"
 #include <spdlog/spdlog.h>
 #include <SDL3_image/SDL_image.h>   // 用于 IMG_LoadTexture, IMG_Init, IMG_Quit
 #include <stdexcept>

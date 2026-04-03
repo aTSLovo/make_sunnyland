@@ -1,4 +1,4 @@
-#include "engine/core/GameApp.h"
+#include "engine/core/gameApp.h"
 #include <spdlog/spdlog.h>
 
 int main(int, char**) {

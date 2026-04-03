@@ -30,12 +30,14 @@ find_package(nlohmann_json REQUIRED)
 
 add_executable(${TARGET})
 set(sources src/main.cpp
-            src/engine/core/GameApp.cpp
-            src/engine/core/Time.cpp
-            src/engine/resource/MusicManager.cpp
-            src/engine/resource/FontManager.cpp
-            src/engine/resource/TextureManager.cpp
-            src/engine/resource/ResourceManager.cpp
+            src/engine/core/gameApp.cpp
+            src/engine/core/time.cpp
+            src/engine/resource/fontManager.cpp
+            src/engine/resource/musicManager.cpp
+            src/engine/resource/textureManager.cpp
+            src/engine/resource/resourceManager.cpp
+            src/engine/render/camera.cpp
+            src/engine/render/renderer.cpp
 )
 
 # 添加可执行文件

@@ -1,4 +1,4 @@
-#include "FontManager.h"
+#include "fontManager.h"
 #include <spdlog/spdlog.h>
 namespace engine::resource {
 

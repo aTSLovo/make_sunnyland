@@ -10,14 +10,14 @@ namespace engine::core {
  */
 class Time final {
 private:
-    Uint64 last_time = 0;           // 上一帧的时间戳，单位纳秒
-    Uint64 frame_start_time = 0;    // 当前帧开始时间，单位纳秒
-    double time_scale = 1.0;        // 时间缩放倍率
-    double delta_time = 0.0;        // 未缩放的帧间时间差，单位秒
+    Uint64 last_time_ = 0;           // 上一帧的时间戳，单位纳秒
+    Uint64 frame_start_time_ = 0;    // 当前帧开始时间，单位纳秒
+    double time_scale_ = 1.0;        // 时间缩放倍率
+    double delta_time_ = 0.0;        // 未缩放的帧间时间差，单位秒
 
     // 帧率
-    int target_fps = 0;             // 目标fps，0表示无限制
-    double target_frame_time = 0.0; // 目标每帧时间，单位秒
+    int target_fps_ = 0;             // 目标fps，0表示无限制
+    double target_frame_time_ = 0.0; // 目标每帧时间，单位秒
 public:
     Time();
     

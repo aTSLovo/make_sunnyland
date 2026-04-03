@@ -1,7 +1,7 @@
-#include "ResourceManager.h"
-#include "FontManager.h"
-#include "MusicManager.h"
-#include "TextureManager.h"
+#include "resourceManager.h"
+#include "fontManager.h"
+#include "musicManager.h"
+#include "textureManager.h"
 
 #include <SDL3_mixer/SDL_mixer.h>
 #include <SDL3_ttf/SDL_ttf.h>
