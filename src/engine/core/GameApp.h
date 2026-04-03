@@ -2,9 +2,11 @@
 #include <memory>
 struct SDL_Window;
 struct SDL_Renderer;
+namespace engine::resource {
+class ResourceManager;
+}
 namespace engine::core {
 class Time;
-
 /**
  * @brief 主游戏应用程序类，初始化SDL，管理游戏循环。
  */
@@ -14,7 +16,9 @@ private:
     SDL_Renderer* _m_renderer = nullptr;
     bool isRunning = false;
 
+    // 引擎组件
     std::unique_ptr<engine::core::Time> _m_time;
+    std::unique_ptr<engine::resource::ResourceManager> _m_resource_manager;
 
 public:
     GameApp();
@@ -50,5 +54,13 @@ private:
     void render();
 
     void close();
+
+    // 各模块的初始化/创建函数，在init()中调用
+    bool initSDL();
+    bool initTime();
+    bool initResourceManager();
+
+    // 测试资源管理模块
+    void testResourceManager();
 };
 }

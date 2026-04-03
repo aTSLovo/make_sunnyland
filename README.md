@@ -1,11 +1,25 @@
+engine/core 引擎核心组件
 GameAPP文件控制主循环
 每次更新调用下面三个函数
 handleEvenets
 update
 render
+init函数调用initSDL、initTime、initResourceManager
+完成SDL窗口、渲染器初始化，时间初始化，资源管理模块初始化
+使用testResourceManager测试资源管理模块
 
 帧率控制在Time文件中
 delta_time记录帧间时间差，用于记录在不同帧率下每帧不同的时间
 在Unity中，Update函数每帧调用一次，如果直接按每帧移动物体，帧率不同会导致物体移动速度不一致。
 通过将移动量乘以delta_time，可以将每帧的变化量转换为每秒的变化量
 从而保证无论帧率高低，物体每秒移动的距离保持一致。
+
+engine/resource 游戏引擎资源管理组件
+音乐资源管理
+SDL3_mixer更新后API变更，原Chunk和Music数据文件统一用Audio数据存储
+需要创建MIX_Mixer，再在当前mixer上创建MIX_Track(轨道)，在轨道上播放音频
+字体资源模块、材质资源模块
+通用loadXXX、getXXX、unloadXXX、clearXXX进行资源管理
+资源使用unordered_map，根据键值对存储，unique_ptr自定义删除器完成资源清理
+
+使用ResourceManager类统一管理资源，实现不同资源的指针以及调用接口，这样在GameApp里用指针管理ResourceManager就可以管理所有资源了

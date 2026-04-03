@@ -1,13 +1,12 @@
 #include "GameApp.h"
 #include "Time.h"
+#include "../resource/ResourceManager.h"
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
 
 namespace engine::core {
 
-GameApp::GameApp() {
-    _m_time = std::make_unique<Time>();
-}
+GameApp::GameApp() = default;
 
 GameApp::~GameApp() {
     if(isRunning) {
@@ -38,24 +37,16 @@ void GameApp::run() {
 
 bool GameApp::init() {
     spdlog::trace("初始化GameApp...");
-    if(!SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO)) {
-        spdlog::error("无法初始化SDL，错误：{}", SDL_GetError());
-        return false;
-    }
 
-    _m_window = SDL_CreateWindow("SunnyLand", 1280, 720, SDL_WINDOW_RESIZABLE);
-    if(_m_window == nullptr) {
-        spdlog::error("无法创建窗口，错误：{}", SDL_GetError());
-        return false;
-    }
+    if(!initSDL()) return false;
+    if(!initTime()) return false;
+    if(!initResourceManager()) return false;
 
-    _m_renderer = SDL_CreateRenderer(_m_window, NULL);
-    if(_m_renderer == nullptr) {
-        spdlog::error("无法创建渲染器，错误：{}", SDL_GetError());
-        return false;
-    }
+    // 测试资源管理器
+    testResourceManager();
 
     isRunning = true;
+    spdlog::trace("初始化GameAPP完成!");
     return true;
 }
 
@@ -88,6 +79,58 @@ void GameApp::close() {
     }
     SDL_Quit();
     isRunning = false;
+}
+
+bool GameApp::initSDL() {
+    if(!SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO)) {
+        spdlog::error("无法初始化SDL，错误：{}", SDL_GetError());
+        return false;
+    }
+
+    _m_window = SDL_CreateWindow("SunnyLand", 1280, 720, SDL_WINDOW_RESIZABLE);
+    if(_m_window == nullptr) {
+        spdlog::error("无法创建窗口，错误：{}", SDL_GetError());
+        return false;
+    }
+
+    _m_renderer = SDL_CreateRenderer(_m_window, NULL);
+    if(_m_renderer == nullptr) {
+        spdlog::error("无法创建渲染器，错误：{}", SDL_GetError());
+        return false;
+    }
+    return true;
+}
+
+bool GameApp::initTime() {
+    try {
+        _m_time = std::make_unique<Time>();
+    } catch (const std::exception& e) {
+        spdlog::error("初始化时间管理失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("时间管理初始化成功。");
+    return true;
+}
+
+bool GameApp::initResourceManager() {
+    try {
+        _m_resource_manager = std::make_unique<engine::resource::ResourceManager>(_m_renderer);
+    } catch (const std::exception& e) {
+        spdlog::error("初始化资源管理器失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("资源管理器初始化成功。");
+    return true;
+}
+
+void GameApp::testResourceManager() {
+    _m_resource_manager->getFont("assets/fonts/VonwaonBitmap-16px.ttf", 16);
+    _m_resource_manager->getAudio("assets/audio/button_click.wav");
+    _m_resource_manager->getTexture("assets/textures/Actors/eagle-attack.png");
+
+    _m_resource_manager->unloadFont("assets/fonts/VonwaonBitmap-16px.ttf", 16);
+    _m_resource_manager->unloadAudio("assets/audio/button_click.wav");
+    _m_resource_manager->unloadTexture("assets/textures/Actors/eagle-attack.png");
 }
 
 }
