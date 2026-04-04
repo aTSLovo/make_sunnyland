@@ -3,6 +3,10 @@
 struct SDL_Window;
 struct SDL_Renderer;
 
+namespace engine::input {
+class InputManager;
+}
+
 namespace engine::resource {
 class ResourceManager;
 }
@@ -31,6 +35,7 @@ private:
     std::unique_ptr<engine::render::Camera> _m_camera;
     std::unique_ptr<engine::render::Renderer> _m_renderer;
     std::unique_ptr<engine::core::Config> _m_config;
+    std::unique_ptr<engine::input::InputManager> _m_input_manager;
 
 public:
     GameApp();
@@ -74,10 +79,12 @@ private:
     [[nodiscard]] bool initResourceManager();
     [[nodiscard]] bool initCamera();
     [[nodiscard]] bool initRenderer();
+    [[nodiscard]] bool initInputManager();
 
     // 测试函数
     void testResourceManager();
     void testCamera();
     void testRenderer();
+    void testInputManager();
 };
 }

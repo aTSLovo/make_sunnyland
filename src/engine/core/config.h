@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -29,7 +30,7 @@ public:
     // 音频设置
     float audio_volume_ = 0.5f;
 
-    // 存储动作名称到 SDL Scancode 名称列表的映射
+    // 存储动作名称到 SDL Scancode 名称列表的映射，动作 -> 按键名称
     std::unordered_map<std::string, std::vector<std::string>> input_mappings_ = {
         // 提供一些合理的默认值，以防配置文件加载失败或缺少此部分
         {"move_left", {"A", "Left"}},

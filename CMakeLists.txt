@@ -39,6 +39,7 @@ set(sources src/main.cpp
             src/engine/resource/resourceManager.cpp
             src/engine/render/camera.cpp
             src/engine/render/renderer.cpp
+            src/engine/input/inputManager.cpp
 )
 
 # 添加可执行文件

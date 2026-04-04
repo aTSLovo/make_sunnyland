@@ -1,6 +1,7 @@
 #include "gameApp.h"
 #include "time.h"
 #include "config.h"
+#include "../input/inputManager.h"
 #include "../resource/resourceManager.h"
 #include "../render/camera.h"
 #include "../render/renderer.h"
@@ -23,10 +24,11 @@ void GameApp::run() {
         spdlog::error("初始化失败，无法运行游戏");
         return ;
     }
-    _m_time->setTargetFps(_m_config->target_fps_);
+    
     while(isRunning) {
         _m_time->update();
         double delta_time = _m_time->getDeltaTime();
+        _m_input_manager->update();
 
         handleEvenets();
         update(delta_time);
@@ -47,6 +49,7 @@ bool GameApp::init() {
     if(!initResourceManager()) return false;
     if(!initCamera()) return false;
     if(!initRenderer()) return false;
+    if(!initInputManager()) return false;
 
     // 测试资源管理器
     testResourceManager();
@@ -57,12 +60,13 @@ bool GameApp::init() {
 }
 
 void GameApp::handleEvenets() {
-    SDL_Event event;
-    while(SDL_PollEvent(&event)) {
-        if(event.type == SDL_EVENT_QUIT) {
-            isRunning = false;
-        }
+    if (_m_input_manager->shouldQuit()) {
+        spdlog::trace("GameApp 收到来自 InputManager 的退出请求。");
+        isRunning = false;
+        return;
     }
+    
+    testInputManager();
 }
 
 void GameApp::update(double delta_time) {
@@ -146,6 +150,7 @@ bool GameApp::initTime() {
         spdlog::error("初始化时间管理失败: {}", e.what());
         return false;
     }
+    _m_time->setTargetFps(_m_config->target_fps_);
     spdlog::trace("时间管理初始化成功。");
     return true;
 }
@@ -183,6 +188,17 @@ bool GameApp::initRenderer() {
     return true;
 }
 
+bool GameApp::initInputManager() {
+    try {
+        _m_input_manager = std::make_unique<engine::input::InputManager>(_m_sdl_renderer, _m_config.get());
+    } catch (const std::exception& e) {
+        spdlog::error("初始化输入管理器失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("初始化输入管理器成功。");
+    return true;
+}
+
 void GameApp::testResourceManager() {
     _m_resource_manager->getFont("assets/fonts/VonwaonBitmap-16px.ttf", 16);
     _m_resource_manager->getAudio("assets/audio/button_click.wav");
@@ -215,6 +231,33 @@ void GameApp::testRenderer()
     _m_renderer->drawSprite(*_m_camera, sprite_world, glm::vec2(200, 200), glm::vec2(1.0f, 1.0f), rotation);
     _m_renderer->drawUISprite(sprite_ui, glm::vec2(100, 100));
 
+}
+
+void GameApp::testInputManager()
+{
+    std::vector<std::string> actions = {
+        "move_up",
+        "move_down",
+        "move_left",
+        "move_right",
+        "jump",
+        "attack",
+        "pause",
+        "MouseLeftClick",
+        "MouseRightClick"
+    };
+
+    for (const auto& action : actions) {
+        if (_m_input_manager->isActionPressed(action)) {
+            spdlog::info(" {} 按下 ", action);
+        }
+        if (_m_input_manager->isActionReleased(action)) {
+            spdlog::info(" {} 抬起 ", action);
+        }
+        if (_m_input_manager->isActionDown(action)) {
+            spdlog::info(" {} 按下中 ", action);
+        }
+    }
 }
 
 }

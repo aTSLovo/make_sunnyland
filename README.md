@@ -41,3 +41,8 @@ Camera类
 worldToScreen 把游戏大世界里的坐标，转换成屏幕上显示的坐标。可以认为屏幕左上角是(0,0)，得到是相对位置
 screenToWorld 将屏幕点击的坐标，转换为游戏世界的坐标
 worldToScreenWithParallax 2D 视差滚动背景
+
+- engine/input
+  InputManager类将Config类中的 动作->按键 映射复制一份
+  把映射动作转成动作状态
+  计算映射按键对应SDL的代码并将代码作为key存储动作，方便updateActionState
