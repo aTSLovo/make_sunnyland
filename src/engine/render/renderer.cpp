@@ -98,12 +98,12 @@ void Renderer::drawParallax(const Camera &camera, const Sprite &sprite, const gl
     }
     else {
         start.y = position_screen.y;
-        stop.y = glm::min(position_screen.y + scaled_tex_h, viewport_size.y);
+        stop.y = glm::min(position_screen.y + scaled_tex_h, viewport_size.y);   // 结束点是一个纹理高度之后，但不超过视口高度
     }
 
     // 将材质循环绘制到屏幕
-    for(float y = start.y; y <= stop.y; y += scaled_tex_h) {
-        for(float x = start.x; x <= stop.x; x += scaled_tex_w) {
+    for(float y = start.y; y < stop.y; y += scaled_tex_h) {
+        for(float x = start.x; x < stop.x; x += scaled_tex_w) {
             SDL_FRect dest_rect = {x, y, scaled_tex_w, scaled_tex_h};
             if(!SDL_RenderTexture(renderer_, texture, nullptr, &dest_rect)) {
                 spdlog::error("渲染视差纹理失败(ID: {}): {}", sprite.getTextureId(), SDL_GetError());

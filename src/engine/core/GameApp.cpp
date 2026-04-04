@@ -1,5 +1,6 @@
 #include "gameApp.h"
 #include "time.h"
+#include "config.h"
 #include "../resource/resourceManager.h"
 #include "../render/camera.h"
 #include "../render/renderer.h"
@@ -22,7 +23,7 @@ void GameApp::run() {
         spdlog::error("初始化失败，无法运行游戏");
         return ;
     }
-    _m_time->setTargetFps(144);
+    _m_time->setTargetFps(_m_config->target_fps_);
     while(isRunning) {
         _m_time->update();
         double delta_time = _m_time->getDeltaTime();
@@ -40,6 +41,7 @@ void GameApp::run() {
 bool GameApp::init() {
     spdlog::trace("初始化GameApp...");
 
+    if(!initConfig()) return false;
     if(!initSDL()) return false;
     if(!initTime()) return false;
     if(!initResourceManager()) return false;
@@ -97,13 +99,24 @@ void GameApp::close() {
     isRunning = false;
 }
 
+bool GameApp::initConfig() {
+    try {
+        _m_config = std::make_unique<engine::core::Config>("assets/config.json");
+    } catch (const std::exception& e) {
+        spdlog::error("初始化配置失败: {}", e.what());
+        return false;
+    }
+    spdlog::trace("配置初始化成功。");
+    return true;
+}
+
 bool GameApp::initSDL() {
     if(!SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO)) {
         spdlog::error("无法初始化SDL，错误：{}", SDL_GetError());
         return false;
     }
 
-    _m_window = SDL_CreateWindow("SunnyLand", 1280, 720, SDL_WINDOW_RESIZABLE);
+    _m_window = SDL_CreateWindow(_m_config->window_title_.c_str(), _m_config->window_width_, _m_config->window_height_, SDL_WINDOW_RESIZABLE);
     if(_m_window == nullptr) {
         spdlog::error("无法创建窗口，错误：{}", SDL_GetError());
         return false;
@@ -115,8 +128,13 @@ bool GameApp::initSDL() {
         return false;
     }
 
+    // 设置 VSync (注意: VSync 开启时，驱动程序会尝试将帧率限制到显示器刷新率，有可能会覆盖我们手动设置的 target_fps)
+    int vsync_mode = _m_config->vsync_enabled_ ? SDL_RENDERER_VSYNC_ADAPTIVE : SDL_RENDERER_VSYNC_DISABLED;
+    SDL_SetRenderVSync(_m_sdl_renderer, vsync_mode);
+    spdlog::trace("VSync 设置为: {}", _m_config->vsync_enabled_ ? "Enabled" : "Disabled");
+
     // 设置逻辑分辨率
-    SDL_SetRenderLogicalPresentation(_m_sdl_renderer, 640, 360, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+    SDL_SetRenderLogicalPresentation(_m_sdl_renderer,  _m_config->window_width_ / 2, _m_config->window_height_ / 2, SDL_LOGICAL_PRESENTATION_LETTERBOX);
     spdlog::trace("SDL 初始化成功。");
     return true;
 }
@@ -145,7 +163,7 @@ bool GameApp::initResourceManager() {
 
 bool GameApp::initCamera() {
     try {
-        _m_camera = std::make_unique<engine::render::Camera>(glm::vec2(640, 360));
+        _m_camera = std::make_unique<engine::render::Camera>(glm::vec2(_m_config->window_width_ / 2, _m_config->window_height_ / 2));
     } catch (const std::exception& e) {
         spdlog::error("初始化相机失败: {}", e.what());
         return false;

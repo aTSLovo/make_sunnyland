@@ -14,6 +14,8 @@ class Renderer;
 
 namespace engine::core {
 class Time;
+class Config;
+
 /**
  * @brief 主游戏应用程序类，初始化SDL，管理游戏循环。
  */
@@ -28,6 +30,7 @@ private:
     std::unique_ptr<engine::resource::ResourceManager> _m_resource_manager;
     std::unique_ptr<engine::render::Camera> _m_camera;
     std::unique_ptr<engine::render::Renderer> _m_renderer;
+    std::unique_ptr<engine::core::Config> _m_config;
 
 public:
     GameApp();
@@ -65,6 +68,7 @@ private:
     void close();
 
     // 各模块的初始化/创建函数，在init()中调用
+    [[nodiscard]] bool initConfig();
     [[nodiscard]] bool initSDL();
     [[nodiscard]] bool initTime();
     [[nodiscard]] bool initResourceManager();
