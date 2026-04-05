@@ -16,6 +16,9 @@ class Camera;
 class Renderer;
 }
 
+namespace engine::object {
+class GameObject;
+}
 namespace engine::core {
 class Time;
 class Config;
@@ -86,5 +89,6 @@ private:
     void testCamera();
     void testRenderer();
     void testInputManager();
+    void testGameObject();
 };
 }

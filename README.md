@@ -46,3 +46,8 @@ worldToScreenWithParallax 2D 视差滚动背景
   InputManager类将Config类中的 动作->按键 映射复制一份
   把映射动作转成动作状态
   计算映射按键对应SDL的代码并将代码作为key存储动作，方便updateActionState
+
+- engine/component
+Component作为抽象基类，后续所有组件都继承它
+
+- engine/object
