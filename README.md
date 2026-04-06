@@ -20,6 +20,8 @@ Config管理配置文件
 如果存在config.json文件，那么从json文件中读取配置并设置类中pubilc成员变量
 如不存在，那么将现有默认配置转换成json对象，再写入json文件中
 
+Context管理上下文
+
 - engine/resource 游戏引擎资源管理组件
 音乐资源管理
 SDL3_mixer更新后API变更，原Chunk和Music数据文件统一用Audio数据存储
@@ -48,6 +50,9 @@ worldToScreenWithParallax 2D 视差滚动背景
   计算映射按键对应SDL的代码并将代码作为key存储动作，方便updateActionState
 
 - engine/component
-Component作为抽象基类，后续所有组件都继承它
+  Component作为抽象基类，后续所有组件都继承它
+  SpriteComponent管理GameObject的视觉表示，通过持有一个 Sprite 对象
+  TransformComponent管理GameObject的位置、旋转和缩放
 
 - engine/object
+  管理游戏对象的组件，并提供添加、获取、检查和移除组件的功能

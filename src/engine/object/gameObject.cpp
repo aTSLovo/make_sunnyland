@@ -9,17 +9,17 @@ GameObject::GameObject(const std::string& name, const std::string& tag) : name_(
     spdlog::trace("GameObject created: {} {}", name_, tag_);
 }
 
-void GameObject::update(float delta_time) {
+void GameObject::update(float delta_time, engine::core::Context& context) {
     // 遍历所有组件并调用它们的 update 方法
     for(auto& component : components_) {
-        component.second->update(delta_time);
+        component.second->update(delta_time, context);
     }
 }
 
-void GameObject::render() {
+void GameObject::render(engine::core::Context& context) {
     // 遍历所有组件并调用它们的 render 方法
     for(auto& component : components_) {
-        component.second->render();
+        component.second->render(context);
     }
 }
 
@@ -32,10 +32,10 @@ void GameObject::clean() {
     components_.clear();
 }
 
-void GameObject::handleInput() {
+void GameObject::handleInput(engine::core::Context& context) {
     // 遍历所有组件并调用它们的 handleInput 方法
     for(auto& component : components_) {
-        component.second->handleInput();
+        component.second->handleInput(context);
     }
 }
 

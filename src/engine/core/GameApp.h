@@ -22,6 +22,7 @@ class GameObject;
 namespace engine::core {
 class Time;
 class Config;
+class Context;
 
 /**
  * @brief 主游戏应用程序类，初始化SDL，管理游戏循环。
@@ -39,6 +40,7 @@ private:
     std::unique_ptr<engine::render::Renderer> _m_renderer;
     std::unique_ptr<engine::core::Config> _m_config;
     std::unique_ptr<engine::input::InputManager> _m_input_manager;
+    std::unique_ptr<engine::core::Context> _m_context;
 
 public:
     GameApp();
@@ -83,6 +85,7 @@ private:
     [[nodiscard]] bool initCamera();
     [[nodiscard]] bool initRenderer();
     [[nodiscard]] bool initInputManager();
+    [[nodiscard]] bool initContext();
 
     // 测试函数
     void testResourceManager();

@@ -33,6 +33,7 @@ set(sources src/main.cpp
             src/engine/core/gameApp.cpp
             src/engine/core/time.cpp
             src/engine/core/config.cpp
+            src/engine/core/context.cpp
             src/engine/resource/fontManager.cpp
             src/engine/resource/musicManager.cpp
             src/engine/resource/textureManager.cpp
@@ -41,6 +42,8 @@ set(sources src/main.cpp
             src/engine/render/renderer.cpp
             src/engine/input/inputManager.cpp
             src/engine/object/gameObject.cpp
+            src/engine/component/transformComponent.cpp
+            src/engine/component/spriteComponent.cpp
 )
 
 # 添加可执行文件

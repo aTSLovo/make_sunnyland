@@ -1,15 +1,20 @@
 #include "gameApp.h"
 #include "time.h"
 #include "config.h"
+#include "context.h"
 #include "../input/inputManager.h"
 #include "../resource/resourceManager.h"
 #include "../render/camera.h"
 #include "../render/renderer.h"
 #include "../object/gameObject.h"
+#include "../component/spriteComponent.h"
+#include "../component/transformComponent.h"
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
 
 namespace engine::core {
+
+engine::object::GameObject game_object("test_game_object");
 
 GameApp::GameApp() = default;
 
@@ -51,6 +56,7 @@ bool GameApp::init() {
     if(!initCamera()) return false;
     if(!initRenderer()) return false;
     if(!initInputManager()) return false;
+    if(!initContext()) return false;
 
     // 测试资源管理器
     testResourceManager();
@@ -84,6 +90,7 @@ void GameApp::render() {
 
     // 2. 具体渲染代码
     testRenderer();
+    game_object.render(*_m_context);
 
     // 3. 更新屏幕显示
     _m_renderer->present();
@@ -203,6 +210,21 @@ bool GameApp::initInputManager() {
     return true;
 }
 
+bool GameApp::initContext() {
+    try {
+        _m_context = std::make_unique<engine::core::Context>(
+            *_m_input_manager,
+            *_m_camera,
+            *_m_renderer,
+            *_m_resource_manager
+        );
+    } catch (const std::exception& e) {
+        spdlog::error("初始化上下文失败: {}", e.what());
+        return false;
+    }
+    return true;
+}
+
 void GameApp::testResourceManager() {
     _m_resource_manager->getFont("assets/fonts/VonwaonBitmap-16px.ttf", 16);
     _m_resource_manager->getAudio("assets/audio/button_click.wav");
@@ -265,8 +287,10 @@ void GameApp::testInputManager()
 }
 
 void GameApp::testGameObject() {
-    engine::object::GameObject game_object("test_game_object");
-    game_object.addComponent<engine::component::Component>();
+    game_object.addComponent<engine::component::TransformComponent>(glm::vec2(100, 100));
+    game_object.addComponent<engine::component::SpriteComponent>("assets/textures/Props/big-crate.png", *_m_resource_manager, engine::utils::Alignment::CENTER);
+    game_object.getComponent<engine::component::TransformComponent>()->setScale(glm::vec2(2.0f, 2.0f));
+    game_object.getComponent<engine::component::TransformComponent>()->setRotation(30.0f);
 }
 
 }
