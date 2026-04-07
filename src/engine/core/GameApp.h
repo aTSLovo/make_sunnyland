@@ -16,9 +16,10 @@ class Camera;
 class Renderer;
 }
 
-namespace engine::object {
-class GameObject;
+namespace engine::scene {
+class SceneManager;
 }
+
 namespace engine::core {
 class Time;
 class Config;
@@ -34,13 +35,14 @@ private:
     bool isRunning = false;
 
     // 引擎组件
-    std::unique_ptr<engine::core::Time> _m_time;
-    std::unique_ptr<engine::resource::ResourceManager> _m_resource_manager;
+    std::unique_ptr<engine::core::Time> _m_time;                                // 帧率控制
+    std::unique_ptr<engine::resource::ResourceManager> _m_resource_manager;     // 资源控制
     std::unique_ptr<engine::render::Camera> _m_camera;
     std::unique_ptr<engine::render::Renderer> _m_renderer;
     std::unique_ptr<engine::core::Config> _m_config;
-    std::unique_ptr<engine::input::InputManager> _m_input_manager;
+    std::unique_ptr<engine::input::InputManager> _m_input_manager;              // 输入控制
     std::unique_ptr<engine::core::Context> _m_context;
+    std::unique_ptr<engine::scene::SceneManager> _m_scene_manager;              // 场景管理控制，run循环更新离不开它
 
 public:
     GameApp();
@@ -86,12 +88,7 @@ private:
     [[nodiscard]] bool initRenderer();
     [[nodiscard]] bool initInputManager();
     [[nodiscard]] bool initContext();
+    [[nodiscard]] bool initSceneManager();
 
-    // 测试函数
-    void testResourceManager();
-    void testCamera();
-    void testRenderer();
-    void testInputManager();
-    void testGameObject();
 };
 }

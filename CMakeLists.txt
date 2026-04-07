@@ -28,6 +28,25 @@ find_package(glm REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
+# add_executable(${TARGET}
+#                 src/main.cpp
+#                 src/engine/core/gameApp.cpp
+#                 src/engine/core/time.cpp
+#                 src/engine/core/config.cpp
+#                 src/engine/core/context.cpp
+#                 src/engine/resource/fontManager.cpp
+#                 src/engine/resource/musicManager.cpp
+#                 src/engine/resource/textureManager.cpp
+#                 src/engine/resource/resourceManager.cpp
+#                 src/engine/render/camera.cpp
+#                 src/engine/render/renderer.cpp
+#                 src/engine/input/inputManager.cpp
+#                 src/engine/object/gameObject.cpp
+#                 src/engine/component/transformComponent.cpp
+#                 src/engine/component/spriteComponent.cpp
+#                 src/engine/scene/scene.cpp
+#                 src/engine/scene/sceneManager.cpp
+# )
 add_executable(${TARGET})
 set(sources src/main.cpp
             src/engine/core/gameApp.cpp
@@ -44,6 +63,9 @@ set(sources src/main.cpp
             src/engine/object/gameObject.cpp
             src/engine/component/transformComponent.cpp
             src/engine/component/spriteComponent.cpp
+            src/engine/scene/scene.cpp
+            src/engine/scene/sceneManager.cpp
+            src/game/scene/gameScene.cpp
 )
 
 # 添加可执行文件

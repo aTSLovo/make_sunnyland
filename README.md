@@ -56,3 +56,9 @@ worldToScreenWithParallax 2D 视差滚动背景
 
 - engine/object
   管理游戏对象的组件，并提供添加、获取、检查和移除组件的功能
+
+- src/game/scene
+  测试用的代码从GameApp移到src/game/scene/gameScene.cpp里
+  在GameAPP类init，往_m_scene_manager中请求压入类型为game::scene::GameScene的GameApp场景
+  在updata时，使用场景管理类的processPendingActions调用pushScene把测试场景压入进场景栈里，在压入栈之前，先初始化场景init，此时动态绑定到GameScene的init里，从而执行createTestObject完成测试对象的创建(transform组件、sprite组件)
+  在render时，一步步SceneManager::render -> Scene::render -> GameObject::render -> Component::render，通过虚函数动态绑定到精灵组件的render，这样test_object就画在界面了
