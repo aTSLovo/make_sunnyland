@@ -63,8 +63,10 @@ set(sources src/main.cpp
             src/engine/object/gameObject.cpp
             src/engine/component/transformComponent.cpp
             src/engine/component/spriteComponent.cpp
+            src/engine/component/parallaxComponent.cpp
             src/engine/scene/scene.cpp
             src/engine/scene/sceneManager.cpp
+            src/engine/scene/levelLoader.cpp
             src/game/scene/gameScene.cpp
 )
 

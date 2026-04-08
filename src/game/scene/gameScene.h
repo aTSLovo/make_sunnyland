@@ -28,6 +28,7 @@ public:
 private:
     // 测试函数
     void createTestObject();
+    void testCamera();          ///< @brief 在handleInput中测试，检测按键按下类型，移动相机
 
 };
 

@@ -3,7 +3,11 @@
 #include "../../engine/object/gameObject.h"
 #include "../../engine/component/spriteComponent.h"
 #include "../../engine/component/transformComponent.h"
+#include "../../engine/scene/levelLoader.h"
+#include "../../engine/input/inputManager.h"
+#include "../../engine/render/camera.h"
 #include <spdlog/spdlog.h>
+#include <SDL3/SDL_rect.h>
 namespace game::scene {
 
 GameScene::GameScene(std::string name, engine::core::Context& context, engine::scene::SceneManager& scene_manager)
@@ -14,6 +18,12 @@ GameScene::GameScene(std::string name, engine::core::Context& context, engine::s
 
 // 覆盖场景基类的核心方法
 void GameScene::init() {
+    spdlog::trace("GameScene 正在初始化");
+    // 加载关卡（level_loader通常加载完成后即可销毁，因此不存为成员变量）
+    engine::scene::LevelLoader level_loader;
+    level_loader.loadLevel("assets/maps/level1.tmj", *this);
+
+    // 创建 test_object
     createTestObject();
 
     Scene::init();
@@ -26,15 +36,19 @@ void GameScene::update(float delta_time) {
 
 void GameScene::render() {
     Scene::render();
+
 }
 
 void GameScene::handleInput() {
     Scene::handleInput();
+    testCamera();
 }
 
 void GameScene::clean() {
     Scene::clean();
 }
+
+// --- 测试方法 ---
 
 void GameScene::createTestObject() {
     spdlog::trace("在 GameScene 中创建 test_object...");
@@ -49,4 +63,12 @@ void GameScene::createTestObject() {
     spdlog::trace("test_object 创建并添加到 GameScene 中。");
 }
 
+void GameScene::testCamera() {
+    auto& camera = context_.getCamera();
+    auto& input_manager = context_.getInputManager();
+    if (input_manager.isActionDown("move_up")) camera.move(glm::vec2(0, -1));   
+    if (input_manager.isActionDown("move_down")) camera.move(glm::vec2(0, 1));
+    if (input_manager.isActionDown("move_left")) camera.move(glm::vec2(-1, 0));
+    if (input_manager.isActionDown("move_right")) camera.move(glm::vec2(1, 0));
+}
 }

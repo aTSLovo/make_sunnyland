@@ -147,4 +147,5 @@ void SceneManager::replaceScene(std::unique_ptr<Scene>&& scene) {
     // 将新场景压入栈顶
     scene_stack_.push_back(std::move(scene));
 }
+
 }
