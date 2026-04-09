@@ -64,6 +64,7 @@ set(sources src/main.cpp
             src/engine/component/transformComponent.cpp
             src/engine/component/spriteComponent.cpp
             src/engine/component/parallaxComponent.cpp
+            src/engine/component/tilelayerComponent.cpp
             src/engine/scene/scene.cpp
             src/engine/scene/sceneManager.cpp
             src/engine/scene/levelLoader.cpp

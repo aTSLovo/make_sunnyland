@@ -19,6 +19,12 @@ private:
     bool is_flipped_ = false;                 ///< @brief 是否水平翻转
 
 public:
+
+    /**
+     * @brief 默认构造函数（创建一个空的/无效的精灵）
+     */
+    Sprite() = default;
+    
     /**
      * @brief 构造一个精灵
      *
