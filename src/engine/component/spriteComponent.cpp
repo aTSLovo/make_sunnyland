@@ -4,9 +4,26 @@
 #include "../object/gameObject.h"
 #include "../core/context.h"
 #include "../render/renderer.h"
+#include "../render/sprite.h"
 #include <spdlog/spdlog.h>
 
 namespace engine::component {
+
+SpriteComponent::SpriteComponent(
+    engine::render::Sprite&& sprite,
+    engine::resource::ResourceManager& resource_manager,
+    engine::utils::Alignment alignment
+) : sprite_(sprite),
+    resource_manager_(&resource_manager),
+    alignment_(alignment)
+{
+    if (!resource_manager_) {
+        spdlog::critical("创建 SpriteComponent 时 ResourceManager 为空！，此组件将无效。");
+        // 不要在游戏主循环中使用 try...catch / throw，会极大影响性能
+    }
+    // offset_ 和 sprite_size_ 将在 init 中计算
+    spdlog::trace("创建 SpriteComponent，纹理ID: {}", sprite_.getTextureId());
+}
 
 SpriteComponent::SpriteComponent(
     const std::string& texture_id,

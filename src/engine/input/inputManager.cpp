@@ -82,6 +82,7 @@ glm::vec2 InputManager::getLogicalMousePosition() const {
 
 void InputManager::processEvent(const SDL_Event& event) {
     switch(event.type) {
+        // 根据键盘按键处理
         case SDL_EVENT_KEY_DOWN:
         case SDL_EVENT_KEY_UP: {
             SDL_Scancode scancode = event.key.scancode;
@@ -97,6 +98,7 @@ void InputManager::processEvent(const SDL_Event& event) {
             }
             break;
         }
+        // 根据鼠标动作处理
         case SDL_EVENT_MOUSE_BUTTON_DOWN:
         case SDL_EVENT_MOUSE_BUTTON_UP: {
             Uint32 button = event.button.button;

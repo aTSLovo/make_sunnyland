@@ -32,6 +32,19 @@ private:
     bool is_hidden_ = false;                                                ///< @brief 是否隐藏（不渲染）
 
 public:
+
+    /**
+     * @brief 构造函数
+     * @param sprite 精灵
+     * @param resource_manager 资源管理器指针。
+     * @param alignment 初始对齐方式。
+     */
+    SpriteComponent(
+        engine::render::Sprite&& sprite,
+        engine::resource::ResourceManager& resource_manager,
+        engine::utils::Alignment alignment = engine::utils::Alignment::NONE
+    );
+
     /**
      * @brief 构造函数
      * @param texture_id 纹理资源的标识符。

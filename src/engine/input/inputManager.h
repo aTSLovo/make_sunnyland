@@ -20,7 +20,7 @@ enum class ActionState {
 };
 
 /**
- * @brief 输入管理器类，负责处理输入事件和动作状态。
+ * @brief 输入管理器类，负责处理输入事件和动作状态。GameApp的run中每帧_m_input_manager->update()
  * 
  * 该类管理输入事件，将按键转换为动作状态，并提供查询动作状态的功能。
  * 它还处理鼠标位置的逻辑坐标转换。
@@ -59,7 +59,7 @@ public:
     glm::vec2 getLogicalMousePosition() const;                       ///< @brief 获取鼠标位置 （逻辑坐标）
 
 private:
-    void processEvent(const SDL_Event& event);                      ///< @brief 处理 SDL 事件（将按键转换为动作状态）
+    void processEvent(const SDL_Event& event);                      ///< @brief 处理 SDL 事件（将按键转换为动作状态）、将外部输入转换为动作更新
     void initializeMappings(const engine::core::Config* config);                            ///< @brief 根据 Config配置初始化映射表
 
     void updateActionState(const std::string& action_name, bool is_input_active, bool is_repeat_event); ///< @brief 辅助更新动作状态

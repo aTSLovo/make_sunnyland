@@ -1,9 +1,11 @@
 #include "levelLoader.h"
 #include "scene.h"
+#include "../core/context.h"
 #include "../object/gameObject.h"
 #include "../component/parallaxComponent.h"
 #include "../component/transformComponent.h"
 #include "../component/tilelayerComponent.h"
+#include "../component/spriteComponent.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -139,7 +141,52 @@ void LevelLoader::loadTileLayer(const nlohmann::json& layer_json, Scene& scene) 
 }
 
 void LevelLoader::loadObjectLayer(const nlohmann::json& layer_json, Scene& scene) {
-    // TODO
+    if(!layer_json.contains("objects") || !layer_json["objects"].is_array()) {
+        spdlog::error("对象图层 {} 缺少 'objects' 属性。", layer_json.value("name", "Unnamed"));
+        return;
+    }
+
+    // 获取对象数据
+    const auto& objects = layer_json["objects"];
+    for(const auto& object : objects) {
+        auto gid = object.value("gid", 0);
+        if(gid == 0) {  // 如果gid为0 (即不存在)，则代表自己绘制的形状（可能是碰撞盒、触发器等，未来按需处理）
+            // TODO
+        }
+        else {  // 如果gid存在，则按照图片解析流程
+            // --- 根据gid获取必要信息，每个gid对应一个游戏对象 ---
+            auto tile_info = getTileInfoByGid(gid);
+            if (tile_info.sprite.getTextureId().empty()) {
+                spdlog::error("gid为 {} 的瓦片没有图像纹理。", gid);
+                continue;
+            }
+            // 获取Transform相关信息
+            auto position = glm::vec2(object.value("x", 0.0f), object.value("y", 0.0f));
+            auto dst_size = glm::vec2(object.value("width", 0.0f), object.value("height", 0.0f));
+            position = glm::vec2(position.x, position.y - dst_size.y);  // 实际position需要进行调整(左下角到左上角)
+
+            auto rotation = object.value("rotation", 0.0f);
+            auto src_size_opt = tile_info.sprite.getSourceRect();
+            if (!src_size_opt) {        // 正常情况下，所有瓦片的Sprite都设置了源矩形，没有代表某处出错
+                spdlog::error("gid为 {} 的瓦片没有源矩形。", gid);
+                continue;
+            }
+            auto src_size = glm::vec2(src_size_opt->w, src_size_opt->h);    // 成员变量除了 value().w 外，也可以这样获取
+            auto scale = dst_size / src_size;
+
+            // 获取对象名称
+            const std::string& object_name = object.value("name", "Unkown");
+
+            // 创建游戏对象并添加组件
+            auto game_object = std::make_unique<engine::object::GameObject>(object_name);
+            game_object->addComponent<engine::component::TransformComponent>(position, scale, rotation);
+            game_object->addComponent<engine::component::SpriteComponent>(std::move(tile_info.sprite), scene.getContext().getResourceManager());
+
+            // 添加到场景中
+            scene.addGameObject(std::move(game_object));
+            spdlog::info("加载对象: '{}' 完成", object_name);
+        }
+    }
 }
 
 engine::component::TileInfo LevelLoader::getTileInfoByGid(int gid) {
