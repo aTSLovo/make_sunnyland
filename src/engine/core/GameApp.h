@@ -20,6 +20,10 @@ namespace engine::scene {
 class SceneManager;
 }
 
+namespace engine::physics {
+class PhysicsEngine;
+}
+
 namespace engine::core {
 class Time;
 class Config;
@@ -43,6 +47,7 @@ private:
     std::unique_ptr<engine::input::InputManager> _m_input_manager;              // 输入控制
     std::unique_ptr<engine::core::Context> _m_context;
     std::unique_ptr<engine::scene::SceneManager> _m_scene_manager;              // 场景管理控制，run循环更新离不开它
+    std::unique_ptr<engine::physics::PhysicsEngine> _m_physics_engine;
 
 public:
     GameApp();
@@ -87,8 +92,9 @@ private:
     [[nodiscard]] bool initCamera();
     [[nodiscard]] bool initRenderer();
     [[nodiscard]] bool initInputManager();
+    [[nodiscard]] bool initPhysicsEngine();
     [[nodiscard]] bool initContext();
     [[nodiscard]] bool initSceneManager();
-
+    
 };
 }

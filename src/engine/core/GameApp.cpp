@@ -7,6 +7,7 @@
 #include "../render/camera.h"
 #include "../render/renderer.h"
 #include "../scene/sceneManager.h"
+#include "../physics/physicsEngine.h"
 #include "../../game/scene/gameScene.h"
 #include <SDL3/SDL.h>
 #include <spdlog/spdlog.h>
@@ -56,6 +57,7 @@ bool GameApp::init() {
     if(!initRenderer()) return false;
     if(!initInputManager()) return false;
 
+    if(!initPhysicsEngine()) return false;
     if(!initContext()) return false;
     if(!initSceneManager()) return false;
 
@@ -97,6 +99,8 @@ void GameApp::render() {
 
 void GameApp::close() {
     spdlog::trace("关闭GameApp...");
+    // 先关闭场景管理器，确保所有场景都被清理
+    _m_scene_manager->close();
 
     // 为了确保正确的销毁顺序，有些智能指针对象也需要手动管理
     _m_resource_manager.reset();
@@ -209,13 +213,24 @@ bool GameApp::initInputManager() {
     return true;
 }
 
+bool GameApp::initPhysicsEngine() {
+    try {
+        _m_physics_engine = std::make_unique<engine::physics::PhysicsEngine>();
+    } catch (const std::exception& e) {
+        spdlog::error("初始化引擎失败: {}", e.what());
+        return false;
+    }
+    return true;
+}
+
 bool GameApp::initContext() {
     try {
         _m_context = std::make_unique<engine::core::Context>(
             *_m_input_manager,
             *_m_camera,
             *_m_renderer,
-            *_m_resource_manager
+            *_m_resource_manager,
+            *_m_physics_engine
         );
     } catch (const std::exception& e) {
         spdlog::error("初始化上下文失败: {}", e.what());
@@ -233,5 +248,6 @@ bool GameApp::initSceneManager() {
     }
     return true;
 }
+
 
 }
