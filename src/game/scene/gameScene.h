@@ -30,7 +30,7 @@ private:
     void createTestObject();
     void testCamera();          ///< @brief 在handleInput中测试，检测按键按下类型，移动相机
     void testObject();          ///< @brief 测试物理引擎
-
+    void TestCollisionPairs();  ///< @brief 测试碰撞
 };
 
 }

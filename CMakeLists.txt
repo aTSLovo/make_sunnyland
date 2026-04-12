@@ -66,10 +66,12 @@ set(sources src/main.cpp
             src/engine/component/parallaxComponent.cpp
             src/engine/component/tilelayerComponent.cpp
             src/engine/component/physicsComponent.cpp
+            src/engine/component/colliderComponent.cpp
             src/engine/scene/scene.cpp
             src/engine/scene/sceneManager.cpp
             src/engine/scene/levelLoader.cpp
             src/engine/physics/physicsEngine.cpp
+            src/engine/physics/collision.cpp
             src/game/scene/gameScene.cpp
 )
 

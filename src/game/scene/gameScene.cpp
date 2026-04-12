@@ -4,9 +4,12 @@
 #include "../../engine/component/spriteComponent.h"
 #include "../../engine/component/transformComponent.h"
 #include "../../engine/component/physicsComponent.h"
+#include "../../engine/component/colliderComponent.h"
 #include "../../engine/scene/levelLoader.h"
 #include "../../engine/input/inputManager.h"
 #include "../../engine/render/camera.h"
+#include "../../engine/physics/physicsEngine.h"
+
 #include <spdlog/spdlog.h>
 #include <SDL3/SDL_rect.h>
 namespace game::scene {
@@ -33,6 +36,7 @@ void GameScene::init() {
 
 void GameScene::update(float delta_time) {
     Scene::update(delta_time);
+    TestCollisionPairs();
 }
 
 void GameScene::render() {
@@ -61,9 +65,22 @@ void GameScene::createTestObject() {
     test_object->addComponent<engine::component::TransformComponent>(glm::vec2(100.0f, 100.0f)); 
     test_object->addComponent<engine::component::SpriteComponent>("assets/textures/Props/big-crate.png", context_.getResourceManager());
     test_object->addComponent<engine::component::PhysicsComponent>(&context_.getPhysicsEngine());
-
+    test_object->addComponent<engine::component::ColliderComponent>(
+        std::make_unique<engine::physics::AABBCollider>(glm::vec2(32.0f, 32.0f))
+    );
     // 将创建好的 GameObject 添加到场景中 （一定要用std::move，否则传递的是左值）
     addGameObject(std::move(test_object)); 
+
+    // 添加第二个游戏对象（不受重力影响），用于测试碰撞
+    auto test_object2 = std::make_unique<engine::object::GameObject>("test_object2");
+    test_object2->addComponent<engine::component::TransformComponent>(glm::vec2(50.0f, 50.0f));
+    test_object2->addComponent<engine::component::SpriteComponent>("assets/textures/Props/big-crate.png", context_.getResourceManager());
+    test_object2->addComponent<engine::component::PhysicsComponent>(&context_.getPhysicsEngine(), false);
+    test_object2->addComponent<engine::component::ColliderComponent>(
+        std::make_unique<engine::physics::CircleCollider>(16.0f)
+    );
+    addGameObject(std::move(test_object2));
+
     spdlog::trace("test_object 创建并添加到 GameScene 中。");
 }
 
@@ -91,6 +108,14 @@ void GameScene::testObject()
     }
     if (input_manager.isActionPressed("jump")) {
         test_object_->getComponent<engine::component::PhysicsComponent>()->setVelocity(glm::vec2(0, -400));
+    }
+}
+
+void GameScene::TestCollisionPairs()
+{
+    auto collision_pairs = context_.getPhysicsEngine().getCollisionPairs();
+    for (auto& pair : collision_pairs) {
+        spdlog::info("碰撞对: {} 和 {}", pair.first->getName(), pair.second->getName());
     }
 }
 
