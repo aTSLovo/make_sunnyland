@@ -29,7 +29,7 @@ class InputManager final {
 private:
     SDL_Renderer* sdl_renderer_;    ///< @brief 用于获取逻辑坐标的 SDL_Renderer 指针
     std::unordered_map<std::string, std::vector<std::string>> actions_to_keyname_map_;                      ///< @brief 存储动作名称到按键名称列表的映射
-    std::unordered_map<std::variant<SDL_Scancode, Uint32>, std::vector<std::string>> input_to_actions_map_; ///< @brief 从输入动作code到关联的动作名称列表
+    std::unordered_map<std::variant<SDL_Scancode, Uint32>, std::vector<std::string>> input_to_actions_map_; ///< @brief 从输入动作code到关联的动作名称列表，可能是键盘输入SDL_Scancode或者鼠标输入Uint32
 
     std::unordered_map<std::string, ActionState> action_states_;    ///< @brief 存储每个动作的当前状态
 

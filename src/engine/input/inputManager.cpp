@@ -208,7 +208,7 @@ Uint32 InputManager::mouseButtonFromString(const std::string& button_name) {
     if(button_name == "MouseLeft") return SDL_BUTTON_LEFT;
     if(button_name == "MouseMiddle") return SDL_BUTTON_MIDDLE;
     if(button_name == "MouseRight") return SDL_BUTTON_RIGHT;
-    // SDL 还定义了 SDL_BUTTON_X1 和 SDL_BUTTON_X2
+    // SDL 还定义了 SDL_BUTTON_X1 和 SDL_BUTTON_X2 鼠标侧键
     if (button_name == "MouseX1") return SDL_BUTTON_X1;
     if (button_name == "MouseX2") return SDL_BUTTON_X2;
     return 0; // 0 不是有效的按钮值，表示无效

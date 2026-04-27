@@ -61,7 +61,7 @@ bool GameApp::init() {
     if(!initContext()) return false;
     if(!initSceneManager()) return false;
 
-    // 创建第一个场景并压入栈
+    // 创建第一个GameScene场景并压入栈
     auto first_scene = std::make_unique<game::scene::GameScene>("GameApp", *_m_context, *_m_scene_manager);
     _m_scene_manager->requestPushScene(std::move(first_scene));
 

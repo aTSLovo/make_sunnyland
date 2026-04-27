@@ -26,7 +26,7 @@ private:
     engine::render::Camera& camera_;                            ///< @brief 相机
     engine::render::Renderer& renderer_;                        ///< @brief 渲染器
     engine::resource::ResourceManager& resource_manager_;       ///< @brief 资源管理器
-    engine::physics::PhysicsEngine& physics_engine_;                   ///< @brief 物理引擎
+    engine::physics::PhysicsEngine& physics_engine_;            ///< @brief 物理引擎
 
 public:
     /**

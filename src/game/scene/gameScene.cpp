@@ -5,6 +5,7 @@
 #include "../../engine/component/transformComponent.h"
 #include "../../engine/component/physicsComponent.h"
 #include "../../engine/component/colliderComponent.h"
+#include "../../engine/component/tilelayerComponent.h"
 #include "../../engine/scene/levelLoader.h"
 #include "../../engine/input/inputManager.h"
 #include "../../engine/render/camera.h"
@@ -12,26 +13,36 @@
 
 #include <spdlog/spdlog.h>
 #include <SDL3/SDL_rect.h>
+
 namespace game::scene {
 
 GameScene::GameScene(std::string name, engine::core::Context& context, engine::scene::SceneManager& scene_manager)
-                    : Scene(name, context, scene_manager)
-{
+                    : Scene(name, context, scene_manager) {
     spdlog::trace("GameScene 构造完成。");
 }
 
 // 覆盖场景基类的核心方法
 void GameScene::init() {
-    spdlog::trace("GameScene 正在初始化");
+    spdlog::info("GameScene 正在初始化");
     // 加载关卡（level_loader通常加载完成后即可销毁，因此不存为成员变量）
     engine::scene::LevelLoader level_loader;
     level_loader.loadLevel("assets/maps/level1.tmj", *this);
+
+    // 注册"main"层到物理引擎
+    auto* main_layer = findGameObjectByName("main");
+    if (main_layer) {
+        auto* tile_layer = main_layer->getComponent<engine::component::TileLayerComponent>();
+        if (tile_layer) {
+            context_.getPhysicsEngine().registerCollisionLayer(tile_layer);
+            spdlog::info("注册\"main\"层到物理引擎");
+        }
+    }
 
     // 创建 test_object
     createTestObject();
 
     Scene::init();
-    spdlog::trace("GameScene 初始化完成。");
+    spdlog::info("GameScene 初始化完成。");
 }
 
 void GameScene::update(float delta_time) {
@@ -99,15 +110,20 @@ void GameScene::testObject()
 {
     if (!test_object_) return;
     auto& input_manager = context_.getInputManager();
+    auto* pc = test_object_->getComponent<engine::component::PhysicsComponent>();
     
     if (input_manager.isActionDown("move_left")) {
-        test_object_->getComponent<engine::component::TransformComponent>()->translate(glm::vec2(-1, 0));
+        pc->velocity_.x = -100.0f;
+    } else {
+        pc->velocity_.x *= 0.9f;
     }
     if (input_manager.isActionDown("move_right")) {
-        test_object_->getComponent<engine::component::TransformComponent>()->translate(glm::vec2(1, 0));
+        pc->velocity_.x = 100.0f;
+    } else {
+        pc->velocity_.x *= 0.9f;
     }
     if (input_manager.isActionPressed("jump")) {
-        test_object_->getComponent<engine::component::PhysicsComponent>()->setVelocity(glm::vec2(0, -400));
+        pc->setVelocity(glm::vec2(0, -400));
     }
 }
 

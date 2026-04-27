@@ -124,7 +124,7 @@ public:
     void update(float delta_time, engine::core::Context& context);              ///< @brief 更新所有组件
     void render(engine::core::Context& context);                                ///< @brief 渲染所有组件
     void clean();                                                               ///< @brief 清理所有组件
-    void handleInput(engine::core::Context& context);                           ///< @brief 处理输入
+    void handleInput(engine::core::Context& context);                           ///< @brief 处理所有组件的输入
 
 };
 

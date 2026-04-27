@@ -85,16 +85,16 @@ private:
     void close();
 
     // 各模块的初始化/创建函数，在init()中调用
-    [[nodiscard]] bool initConfig();
-    [[nodiscard]] bool initSDL();
-    [[nodiscard]] bool initTime();
-    [[nodiscard]] bool initResourceManager();
-    [[nodiscard]] bool initCamera();
-    [[nodiscard]] bool initRenderer();
-    [[nodiscard]] bool initInputManager();
-    [[nodiscard]] bool initPhysicsEngine();
-    [[nodiscard]] bool initContext();
-    [[nodiscard]] bool initSceneManager();
+    [[nodiscard]] bool initConfig();                ///< @brief 构造Config类，从config.json文件中加载配置
+    [[nodiscard]] bool initSDL();                   ///< @brief 初始化SDL
+    [[nodiscard]] bool initTime();                  ///< @brief 构造Time类
+    [[nodiscard]] bool initResourceManager();       ///< @brief 构造资源管理器类
+    [[nodiscard]] bool initCamera();                ///< @brief 构造相机类
+    [[nodiscard]] bool initRenderer();              ///< @brief 构造Renderer类
+    [[nodiscard]] bool initInputManager();          ///< @brief 构造InputManager类
+    [[nodiscard]] bool initPhysicsEngine();         ///< @brief 构造PhysicsEngine类
+    [[nodiscard]] bool initContext();               ///< @brief 构造Context上下文类
+    [[nodiscard]] bool initSceneManager();          ///< @brief 构造SceneManager类
     
 };
 }

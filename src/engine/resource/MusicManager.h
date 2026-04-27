@@ -34,7 +34,7 @@ private:
     // track轨道，暂时只有一个轨道
     MIX_Track* _m_track;
 
-    // 音效存储 (文件路径 -> MIX_Track)
+    // 轨道存储 (文件路径 -> MIX_Track)
     // std::unordered_map<std::string, std::unique_ptr<MIX_Track, SDLMIXTrackDeleter>> _m_track;
     // 音乐存储 (文件路径 -> MIX_Audio)
     std::unordered_map<std::string, std::unique_ptr<MIX_Audio, SDLMIXAudioDeleter>> _m_audio;
@@ -52,7 +52,7 @@ private:  // 仅供 ResourceManager 访问的方法
     MIX_Audio* loadAudio(const std::string& file_path);     ///< @brief 从文件路径加载音频
     MIX_Audio* getAudio(const std::string& file_path);      ///< @brief 尝试获取已加载音频的指针，如果未加载则尝试加载
     void unloadAudio(const std::string& file_path);         ///< @brief 卸载指定的音频资源
-    void clearAudio();                                      ///< @brief 清空所有音频资源
+    void clearAudio();                                      ///< @brief 清空所有音频资源，_m_audio
 
 };
 
