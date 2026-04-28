@@ -13,7 +13,7 @@ namespace game::scene {
  * @brief 主要的游戏场景，包含玩家、敌人、关卡元素等。
  */
 class GameScene final : public engine::scene::Scene {
-    engine::object::GameObject* test_object_ = nullptr;  ///< @brief 保存测试对象的指针，方便访问
+    engine::object::GameObject* player_ = nullptr;  ///< @brief 保存玩家对象的指针，方便访问
     
 public:
     GameScene(std::string name, engine::core::Context& context, engine::scene::SceneManager& scene_manager);
@@ -27,9 +27,8 @@ public:
 
 private:
     // 测试函数
-    void createTestObject();
     void testCamera();          ///< @brief 在handleInput中测试，检测按键按下类型，移动相机
-    void testObject();          ///< @brief 测试物理引擎
+    void testPlayer();          ///< @brief 测试玩家对象
     void TestCollisionPairs();  ///< @brief 测试碰撞
 };
 
