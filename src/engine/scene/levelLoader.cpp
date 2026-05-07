@@ -258,6 +258,31 @@ engine::component::TileType LevelLoader::getTileType(const nlohmann::json& tile_
         for(auto& property : tile_json["properties"]) {
             if(property.value("name", "") == "solid") {
                 return property.value("value", false) ? engine::component::TileType::SOLID : engine::component::TileType::NORMAL;
+            } else if(property.value("name", "") == "unisolid") {
+                return property.value("value", false) ? engine::component::TileType::UNISOLID : engine::component::TileType::NORMAL;
+            } else if(property.value("name", "") == "slope") {
+                auto value = property.value("value", "");
+                if(value == "0_1") {
+                    return engine::component::TileType::SLOPE_0_1;
+                } else if(value == "1_0") {
+                    // spdlog::info("斜坡类型: {}", value);
+                    return engine::component::TileType::SLOPE_1_0;
+                } else if(value == "0_2") {
+                    // spdlog::info("斜坡类型: {}", value);
+                    return engine::component::TileType::SLOPE_0_2;
+                } else if(value == "2_1") {
+                    // spdlog::info("斜坡类型: {}", value);
+                    return engine::component::TileType::SLOPE_2_1;
+                } else if(value == "1_2") {
+                    // spdlog::info("斜坡类型: {}", value);
+                    return engine::component::TileType::SLOPE_1_2;
+                } else if(value == "2_0") {
+                    // spdlog::info("斜坡类型: {}", value);
+                    return engine::component::TileType::SLOPE_2_0;
+                } else {
+                    spdlog::error("未知的斜坡类型: {}", value);
+                    return engine::component::TileType::NORMAL;
+                }
             }
             // TODO: 可以在这里添加更多的自定义属性处理逻辑
         }

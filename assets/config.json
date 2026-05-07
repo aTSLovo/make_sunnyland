@@ -11,25 +11,22 @@
     "performance": {
         "target_fps": 60
     },
-    "music": {
-        "audio_volume": 0.5
+    "audio": {
+        "music_volume": 0.5,
+        "sound_volume": 0.5
     },
     "input_mappings": {
         "pause": [
             "P",
             "Escape"
         ],
-        "attack": [
-            "K",
-            "MouseLeft"
+        "move_down": [
+            "S",
+            "Down"
         ],
         "jump": [
             "J",
             "Space"
-        ],
-        "move_down": [
-            "S",
-            "Down"
         ],
         "move_up": [
             "W",
@@ -38,6 +35,10 @@
         "move_right": [
             "D",
             "Right"
+        ],
+        "attack": [
+            "K",
+            "MouseLeft"
         ],
         "move_left": [
             "A",

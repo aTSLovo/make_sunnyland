@@ -2,10 +2,12 @@
 #include <vector>
 #include <utility>
 #include <glm/vec2.hpp>
-
+#include <optional>
+#include "../utils/math.h"
 namespace engine::component {
 class PhysicsComponent;
 class TileLayerComponent;
+enum class TileType;
 }
 
 namespace engine::object {
@@ -24,6 +26,7 @@ private:
     std::vector<engine::component::PhysicsComponent*> components_;      ///< @brief 注册的物理组件容器，非拥有指针
     std::vector<engine::component::TileLayerComponent*> collision_tilelayers_components_;   ///< @brief 注册的瓦片碰撞组件容器，非拥有指针
 
+    std::optional<engine::utils::Rect> world_bound_;
     /// @brief 存储本帧发生的 GameObject 碰撞对 （每次 update 开始时清空）
     std::vector<std::pair<engine::object::GameObject*, engine::object::GameObject*>> collision_pairs_;
 
@@ -50,6 +53,8 @@ public:
     const glm::vec2& getGravity() const { return gravity_; }            ///< @brief 获取当前的全局重力加速度
     void setMaxSpeed(float max_speed) { max_speed_ = max_speed; }       ///< @brief 设置最大速度
     float getMaxSpeed() const { return max_speed_; }                    ///< @brief 获取当前的最大速度
+    void setWorldBound(const engine::utils::Rect& world_bound) { world_bound_ = world_bound; }    ///< @brief 设置世界边界
+    const std::optional<engine::utils::Rect>& getWorldBound() const { return world_bound_; }     ///< @brief 获取世界边界
 
     /// @brief 获取本帧检测到的所有 GameObject 碰撞对。(此列表在每次 update 开始时清空)
     const std::vector<std::pair<engine::object::GameObject*, engine::object::GameObject*>>& getCollisionPairs() const {
@@ -63,5 +68,15 @@ private:
     ///< @brief 处理可移动物体与SOLID物体的碰撞(最小平移向量Minimum Translation Vector)
     void resolveSolidObjectCollisions(engine::object::GameObject* move_obj, engine::object::GameObject* solid_obj);
 
+    /**
+     * @brief 根据瓦片类型和指定宽度x坐标，计算瓦片上对应y坐标。
+     * @param width 从瓦片左侧起算的宽度。
+     * @param type 瓦片类型。
+     * @param tile_size 瓦片尺寸。
+     * @return 瓦片上对应高度（从瓦片下侧起算）。
+     */
+    float getTileHeightAtWidth(float width, engine::component::TileType type, glm::vec2 tile_size);
+
+    void applyWorldBounds(engine::component::PhysicsComponent* pc);     ///< @brief 应用世界边界，限制物体移动范围
 };
 }
