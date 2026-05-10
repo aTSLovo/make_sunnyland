@@ -11,9 +11,9 @@ namespace engine::component {
 class TransformComponent final : public Component {
     friend class engine::object::GameObject;
 public:
-    glm::vec2 position_ = {0.0f, 0.0f};
-    glm::vec2 scale_ = {1.0f, 1.0f};
-    float rotation_ = 0.0f;
+    glm::vec2 position_ = {0.0f, 0.0f};     ///< @brief 位置
+    glm::vec2 scale_ = {1.0f, 1.0f};        ///< @brief 缩放
+    float rotation_ = 0.0f;                 ///< @brief 角度制，单位：度
 
     /**
      * @brief 构造函数

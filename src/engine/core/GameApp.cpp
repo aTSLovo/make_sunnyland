@@ -33,7 +33,7 @@ void GameApp::run() {
     
     while(isRunning) {
         _m_time->update();
-        double delta_time = _m_time->getDeltaTime();
+        float delta_time = _m_time->getDeltaTime();
         _m_input_manager->update();
 
         handleEvenets();

@@ -26,10 +26,9 @@ public:
     void clean() override;
 
 private:
-    // 测试函数
-    void testCamera();          ///< @brief 在handleInput中测试，检测按键按下类型，移动相机
-    void testPlayer();          ///< @brief 测试玩家对象
-    void TestCollisionPairs();  ///< @brief 测试碰撞
+    [[nodiscard]] bool initLevel();               ///< @brief 初始化关卡
+    [[nodiscard]] bool initPlayer();              ///< @brief 初始化玩家
+
 };
 
 }

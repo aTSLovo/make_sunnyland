@@ -73,6 +73,11 @@ set(sources src/main.cpp
             src/engine/physics/physicsEngine.cpp
             src/engine/physics/collision.cpp
             src/game/scene/gameScene.cpp
+            src/game/component/state/fallState.cpp
+            src/game/component/state/idleState.cpp
+            src/game/component/state/jumpState.cpp
+            src/game/component/state/walkState.cpp
+            src/game/component/playerComponent.cpp
 )
 
 # 添加可执行文件

@@ -10,7 +10,7 @@ Time::Time() {
 }
 
 void Time::update() {
-    frame_start_time_ = SDL_GetTicksNS();
+    frame_start_time_ = SDL_GetTicksNS();   // 记录进入 update 时的时间戳
     auto current_delta_time = static_cast<double>(frame_start_time_ - last_time_) / 1000000000.0;
     if(target_frame_time_ > 0.0) {
         limitFrameRate(current_delta_time);
@@ -18,7 +18,7 @@ void Time::update() {
     else {
         delta_time_ = current_delta_time;
     }
-    last_time_ = SDL_GetTicksNS();
+    last_time_ = SDL_GetTicksNS();  // 记录离开 update 时的时间戳
 }
 
 void Time::limitFrameRate(double current_delta_time) {
